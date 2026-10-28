@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 import TuckiiCore
 #if canImport(UserNotifications)
 import UserNotifications

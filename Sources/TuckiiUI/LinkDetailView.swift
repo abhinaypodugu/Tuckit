@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 import TuckiiCore
 
 struct LinkDetailView: View {
