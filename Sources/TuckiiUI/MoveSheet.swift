@@ -5,21 +5,38 @@ struct MoveSheet: View {
     @EnvironmentObject private var store: LibraryStore
     @Environment(\.dismiss) private var dismiss
 
-    let bookmarkID: UUID
+    private let bookmarkIDs: [UUID]
+    private let onMoved: (() -> Void)?
 
     @State private var selectedID: UUID?
 
-    private var bookmark: Bookmark? { store.bookmark(bookmarkID) }
+    init(bookmarkID: UUID, onMoved: (() -> Void)? = nil) {
+        self.bookmarkIDs = [bookmarkID]
+        self.onMoved = onMoved
+    }
+
+    init(bookmarkIDs: [UUID], onMoved: (() -> Void)? = nil) {
+        self.bookmarkIDs = bookmarkIDs
+        self.onMoved = onMoved
+    }
+
+    private var currentCollectionIDs: Set<UUID> {
+        Set(bookmarkIDs.compactMap { store.bookmark($0)?.collectionID })
+    }
+
     private var options: [TuckiiCollection] {
-        store.collections.filter { $0.id != bookmark?.collectionID }
+        if bookmarkIDs.count == 1 {
+            return store.collections.filter { !currentCollectionIDs.contains($0.id) }
+        }
+        return store.collections
     }
 
     var body: some View {
         ZStack {
-            Theme.cream.ignoresSafeArea()
+            Theme.background.ignoresSafeArea()
             VStack(alignment: .leading, spacing: 18) {
                 HStack {
-                    Text("Move to Collection")
+                    Text(bookmarkIDs.count > 1 ? "Move \(bookmarkIDs.count) Links" : "Move to Collection")
                         .font(.system(size: 22, weight: .black, design: .rounded))
                         .foregroundStyle(Theme.ink)
                     Spacer()
@@ -110,7 +127,10 @@ struct MoveSheet: View {
 
     private func move() {
         guard let selectedID else { return }
-        try? store.move(bookmarkID, to: selectedID)
+        for id in bookmarkIDs {
+            try? store.move(id, to: selectedID)
+        }
+        onMoved?()
         dismiss()
     }
 }
