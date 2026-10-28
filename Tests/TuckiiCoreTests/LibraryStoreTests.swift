@@ -152,9 +152,3 @@ final class LibraryStoreTests: XCTestCase {
         XCTAssertEqual(store.usage.links, 0)
     }
 }
-
-private extension LibraryStore {
-    func bookmark(_ id: UUID) -> Bookmark? {
-        bookmarks.first { $0.id == id }
-    }
-}

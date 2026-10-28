@@ -59,6 +59,9 @@ struct CollectionScreen: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: Bookmark.self) { bookmark in
+            LinkDetailView(bookmarkID: bookmark.id)
+        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("")
@@ -94,9 +97,7 @@ struct CollectionScreen: View {
                 spacing: 16
             ) {
                 ForEach(bookmarks) { bookmark in
-                    Button {
-                        store.markSeen(bookmark.id)
-                    } label: {
+                    NavigationLink(value: bookmark) {
                         BookmarkCard(bookmark: bookmark)
                     }
                     .buttonStyle(.plain)

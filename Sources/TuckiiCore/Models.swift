@@ -54,7 +54,7 @@ public struct TuckiiCollection: Codable, Equatable, Identifiable {
     }
 }
 
-public enum SaveSort: String, Codable, CaseIterable {
+public enum SaveSort: String, Codable, CaseIterable, Hashable {
     case newestFirst, oldestFirst, titleAZ, websiteAZ
 
     public var displayName: String {
@@ -67,7 +67,7 @@ public enum SaveSort: String, Codable, CaseIterable {
     }
 }
 
-public enum CollectionSort: String, Codable, CaseIterable {
+public enum CollectionSort: String, Codable, CaseIterable, Hashable {
     case oldestFirst, newestFirst, nameAZ, recentlySaved
 
     public var displayName: String {
@@ -80,12 +80,12 @@ public enum CollectionSort: String, Codable, CaseIterable {
     }
 }
 
-public struct Bookmark: Codable, Equatable, Identifiable {
-    public enum Kind: String, Codable {
+public struct Bookmark: Codable, Equatable, Hashable, Identifiable {
+    public enum Kind: String, Codable, Hashable {
         case link, image
     }
 
-    public enum MetadataState: String, Codable {
+    public enum MetadataState: String, Codable, Hashable {
         case pending, ready, failed
     }
 

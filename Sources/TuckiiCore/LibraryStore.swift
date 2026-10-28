@@ -83,6 +83,10 @@ public final class LibraryStore: ObservableObject {
         collections.first { $0.id == id }
     }
 
+    public func bookmark(_ id: UUID) -> Bookmark? {
+        bookmarks.first { $0.id == id }
+    }
+
     public var visibleCollections: [TuckiiCollection] {
         sortCollections(
             collections.filter { collection in
