@@ -1,0 +1,30 @@
+name: Tuckii
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "16.4"
+  xcodeVersion: "16.0"
+packages:
+  Tuckii:
+    path: .
+targets:
+  Tuckii:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources/TuckiiApp
+    dependencies:
+      - package: Tuckii
+        product: TuckiiUI
+      - package: Tuckii
+        product: TuckiiCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.tuckii
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Tuckii
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.9"
+        CODE_SIGNING_ALLOWED: NO

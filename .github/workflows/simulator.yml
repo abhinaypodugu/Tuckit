@@ -1,0 +1,72 @@
+name: iOS Simulator
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run package tests
+        run: swift test
+
+  build-and-screenshot:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for simulator
+        run: |
+          xcodebuild -project Tuckii.xcodeproj -scheme Tuckii -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO build
+
+      - name: Choose simulator
+        id: sim
+        run: |
+          python3 - >> "$GITHUB_OUTPUT" <<'EOF'
+          import json, subprocess
+          data = json.loads(subprocess.check_output(["xcrun", "simctl", "list", "devices", "available", "-j"]))
+          for runtime in sorted(data["devices"], reverse=True):
+              for device in data["devices"][runtime]:
+                  if device["name"].startswith("iPhone"):
+                      print("udid=" + device["udid"])
+                      print("name=" + device["name"])
+                      raise SystemExit
+          raise SystemExit("No iPhone simulator found")
+          EOF
+
+      - name: Boot simulator
+        run: |
+          xcrun simctl boot "${{ steps.sim.outputs.udid }}"
+          xcrun simctl bootstatus "${{ steps.sim.outputs.udid }}" -b
+          xcrun simctl ui "${{ steps.sim.outputs.udid }}" appearance light
+
+      - name: Install and launch
+        run: |
+          xcrun simctl install "${{ steps.sim.outputs.udid }}" build/Build/Products/Debug-iphonesimulator/Tuckii.app
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" com.example.tuckii
+          sleep 6
+
+      - name: Screenshot
+        run: |
+          mkdir -p artifacts
+          xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot artifacts/home.png
+
+      - name: Upload screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-screenshot
+          path: artifacts
+          if-no-files-found: warn
