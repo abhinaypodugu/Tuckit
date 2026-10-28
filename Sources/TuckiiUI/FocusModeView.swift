@@ -30,7 +30,7 @@ public struct FocusModeView: View {
         return "NEW SAVES"
     }
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             Color(hex: 0x0C0C0E).ignoresSafeArea()
             VStack(spacing: 10) {

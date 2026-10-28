@@ -18,7 +18,7 @@ public struct SearchView: View {
         store.search(trimmedQuery)
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             ZStack {
                 Theme.background.ignoresSafeArea()

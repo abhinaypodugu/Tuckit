@@ -36,7 +36,7 @@ public struct CollectionScreen: View {
         allBookmarks.filter { selection.contains($0.id) }.compactMap(\.url)
     }
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
             if let collection {

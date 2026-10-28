@@ -22,7 +22,7 @@ public struct SettingsView: View {
     @State private var showDeleteConfirm = false
     @State private var alertInfo: SettingsAlert?
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
             ScrollView(showsIndicators: false) {

@@ -24,7 +24,7 @@ public struct LinkDetailView: View {
 
     private var bookmark: Bookmark? { store.bookmark(bookmarkID) }
 
-    var body: some View {
+    public var body: some View {
         ZStack(alignment: .top) {
             Theme.cream.ignoresSafeArea()
             if let bookmark {

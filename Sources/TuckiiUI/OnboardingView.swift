@@ -27,7 +27,7 @@ public struct OnboardingView: View {
         ("travel.example", "Kyoto travel tip: go early", "Visit Higashiyama at 7am to avoid the crowds.", "japan", "Travel", 0x8FB8F5),
     ]
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             Theme.background.ignoresSafeArea()
             VStack(spacing: 14) {

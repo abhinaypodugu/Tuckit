@@ -165,7 +165,7 @@ public struct PaywallView: View {
 
     @State private var plan: Plan = .monthly
 
-    var body: some View {
+    public var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 18) {
                 HStack {
