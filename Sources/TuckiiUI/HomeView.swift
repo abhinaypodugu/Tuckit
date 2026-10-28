@@ -34,7 +34,7 @@ public struct HomeView: View {
                     .padding(.top, 12)
                 }
             }
-            .navigationBarHidden(true)
+            .hiddenNavigationBar
             .navigationDestination(for: UUID.self) { id in
                 CollectionScreen(collectionID: id)
             }
@@ -42,15 +42,15 @@ public struct HomeView: View {
                 CreateCollectionSheet()
                     .environmentObject(store)
             }
-            .fullScreenCover(isPresented: $showSearch) {
+            .fullScreenPresentation(isPresented: $showSearch) {
                 SearchView()
                     .environmentObject(store)
             }
-            .fullScreenCover(isPresented: $showSettings) {
+            .fullScreenPresentation(isPresented: $showSettings) {
                 SettingsView()
                     .environmentObject(store)
             }
-            .fullScreenCover(isPresented: $showFocus) {
+            .fullScreenPresentation(isPresented: $showFocus) {
                 FocusModeView(collectionID: nil)
                     .environmentObject(store)
             }

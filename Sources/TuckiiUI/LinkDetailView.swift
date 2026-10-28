@@ -38,8 +38,7 @@ struct LinkDetailView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .navigationBar)
+        .hiddenNavigationChrome
         .sheet(isPresented: $showMove) {
             MoveSheet(bookmarkID: bookmarkID)
                 .environmentObject(store)

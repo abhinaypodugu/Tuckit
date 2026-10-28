@@ -56,11 +56,11 @@ struct CollectionScreen: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationTitle
         .navigationDestination(for: Bookmark.self) { bookmark in
             LinkDetailView(bookmarkID: bookmark.id)
         }
-        .fullScreenCover(isPresented: $showFocus) {
+        .fullScreenPresentation(isPresented: $showFocus) {
             FocusModeView(collectionID: collectionID)
                 .environmentObject(store)
         }

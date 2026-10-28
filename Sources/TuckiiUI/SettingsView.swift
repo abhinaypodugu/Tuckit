@@ -228,7 +228,7 @@ struct SettingsView: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(Theme.ink)
                     Spacer()
-                    Text("\(used)/\(limit.map(String.init) ?? "∞")")
+                    Text("\(used)/\(limit.map { String($0) } ?? "∞")")
                         .font(.system(size: 13, weight: .bold))
                         .foregroundStyle(Theme.ink)
                 }
