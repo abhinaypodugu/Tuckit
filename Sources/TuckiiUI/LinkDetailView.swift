@@ -113,7 +113,7 @@ struct LinkDetailView: View {
                 .frame(width: 44, height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: 13)
-                        .fill(active ? Theme.ctaYellow : .white.opacity(0.94))
+                        .fill(active ? Theme.ctaYellow : Theme.card.opacity(0.94))
                 )
                 .overlay(RoundedRectangle(cornerRadius: 13).stroke(Theme.ink, lineWidth: 2.5))
         }
@@ -135,7 +135,7 @@ struct LinkDetailView: View {
         .padding(18)
         .background(
             RoundedRectangle(cornerRadius: 22)
-                .fill(.white)
+                .fill(Theme.card)
                 .overlay(RoundedRectangle(cornerRadius: 22).stroke(Theme.ink, lineWidth: 2.5))
         )
     }
@@ -161,7 +161,7 @@ struct LinkDetailView: View {
                     .foregroundStyle(Theme.ink)
                     .padding(.horizontal, 12)
                     .frame(height: 46)
-                    .background(RoundedRectangle(cornerRadius: 10).fill(.white))
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Theme.card))
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(Theme.ctaYellow, lineWidth: 2.5))
                 HStack {
                     Spacer()
@@ -187,7 +187,7 @@ struct LinkDetailView: View {
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundStyle(Theme.ink)
                             .frame(width: 38, height: 38)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(.white))
+                            .background(RoundedRectangle(cornerRadius: 10).fill(Theme.card))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Theme.ink, lineWidth: 2))
                     }
                     .buttonStyle(.plain)
@@ -210,7 +210,7 @@ struct LinkDetailView: View {
                 }
                 .padding(.horizontal, 9)
                 .padding(.vertical, 5)
-                .background(RoundedRectangle(cornerRadius: 8).fill(.white))
+                .background(RoundedRectangle(cornerRadius: 8).fill(Theme.card))
                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Theme.ink, lineWidth: 1.8))
             }
             Text(Self.dateText(bookmark.createdAt))
@@ -277,7 +277,7 @@ struct LinkDetailView: View {
             .buttonStyle(.plain)
         }
         .padding(.vertical, 10)
-        .background(RoundedRectangle(cornerRadius: 14).fill(.white))
+        .background(RoundedRectangle(cornerRadius: 14).fill(Theme.card))
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.ink, lineWidth: 2.5))
     }
 
@@ -310,7 +310,7 @@ struct LinkDetailView: View {
                         .foregroundStyle(Theme.ink)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
-                        .background(RoundedRectangle(cornerRadius: 7).fill(Color(hex: 0xDFF3E9)))
+                        .background(RoundedRectangle(cornerRadius: 7).fill(Theme.chipGreen))
                         .overlay(RoundedRectangle(cornerRadius: 7).stroke(Theme.ink, lineWidth: 1.5))
                 }
                 Button {
@@ -330,7 +330,7 @@ struct LinkDetailView: View {
                     .foregroundStyle(Theme.ink)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
-                    .background(RoundedRectangle(cornerRadius: 7).fill(.white))
+                    .background(RoundedRectangle(cornerRadius: 7).fill(Theme.card))
                     .overlay(RoundedRectangle(cornerRadius: 7).stroke(Theme.ink, lineWidth: 1.5))
                 }
                 .buttonStyle(.plain)
@@ -362,7 +362,7 @@ struct LinkDetailView: View {
                     .frame(minHeight: 96)
                     .scrollContentBackground(.hidden)
                     .padding(8)
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color(hex: 0xFDF6E3)))
+                    .background(RoundedRectangle(cornerRadius: 12).fill(Theme.fieldWarm))
                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.ink.opacity(0.4), lineWidth: 2))
                     .foregroundStyle(Theme.ink)
             } else {
@@ -375,7 +375,7 @@ struct LinkDetailView: View {
                         .foregroundStyle(bookmark.notes == nil ? Color.secondary : Theme.ink)
                         .frame(maxWidth: .infinity, minHeight: 68, alignment: .topLeading)
                         .padding(12)
-                        .background(RoundedRectangle(cornerRadius: 12).fill(Color(hex: 0xFDF6E3)))
+                        .background(RoundedRectangle(cornerRadius: 12).fill(Theme.fieldWarm))
                         .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.ink.opacity(0.35), lineWidth: 2))
                 }
                 .buttonStyle(.plain)
@@ -390,7 +390,7 @@ struct LinkDetailView: View {
                 .foregroundStyle(Theme.ink)
                 .padding(.horizontal, 14)
                 .frame(height: 36)
-                .background(RoundedRectangle(cornerRadius: 9).fill(.white))
+                .background(RoundedRectangle(cornerRadius: 9).fill(Theme.card))
                 .overlay(RoundedRectangle(cornerRadius: 9).stroke(Theme.ink, lineWidth: 2))
         }
         .buttonStyle(.plain)

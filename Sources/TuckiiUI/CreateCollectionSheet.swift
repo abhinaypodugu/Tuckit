@@ -30,7 +30,7 @@ struct CreateCollectionSheet: View {
                                 .font(.system(size: 14, weight: .bold))
                                 .foregroundStyle(Theme.ink)
                                 .frame(width: 36, height: 36)
-                                .background(RoundedRectangle(cornerRadius: 10).fill(.white))
+                                .background(RoundedRectangle(cornerRadius: 10).fill(Theme.card))
                                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Theme.ink, lineWidth: 2))
                         }
                         .buttonStyle(.plain)
@@ -106,7 +106,7 @@ struct CreateCollectionSheet: View {
                 .autocorrectionDisabled()
                 .padding(.horizontal, 14)
                 .frame(height: 50)
-                .background(RoundedRectangle(cornerRadius: 12).fill(.white))
+                .background(RoundedRectangle(cornerRadius: 12).fill(Theme.card))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.ink.opacity(0.35), lineWidth: 2))
                 .onChange(of: name) { newValue in
                     if newValue.count > 40 {
@@ -141,7 +141,7 @@ struct CreateCollectionSheet: View {
             selectedIcon = icon
         } label: {
             RoundedRectangle(cornerRadius: 8)
-                .fill(selectedIcon == icon ? Theme.ctaYellow : .white)
+                .fill(selectedIcon == icon ? Theme.ctaYellow : Theme.card)
                 .frame(height: 34)
                 .overlay(
                     Image(systemName: icon.systemName)

@@ -10,6 +10,7 @@ struct TuckiiApp: App {
         WindowGroup {
             HomeView()
                 .environmentObject(store)
+                .preferredColorScheme(store.settings.darkMode ? .dark : .light)
         }
     }
 }

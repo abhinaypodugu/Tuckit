@@ -63,7 +63,7 @@ struct ProUpsellSheet: View {
                             .foregroundStyle(Theme.ink)
                             .frame(maxWidth: .infinity)
                             .frame(height: 52)
-                            .background(RoundedRectangle(cornerRadius: 12).fill(.white))
+                            .background(RoundedRectangle(cornerRadius: 12).fill(Theme.card))
                             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.ink, lineWidth: 2.5))
                     }
                     .buttonStyle(.plain)
@@ -96,16 +96,16 @@ struct ProUpsellSheet: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Text("Free")
                     .frame(width: 96)
-                    .background(Color(hex: 0xD8ECFA))
+                    .background(Theme.statBlue)
                 Text("Pro")
                     .frame(width: 96)
-                    .background(Color(hex: 0xFBE3A6))
+                    .background(Theme.statYellow)
             }
             .font(.system(size: 14, weight: .heavy))
             .foregroundStyle(Theme.ink)
             .padding(.vertical, 8)
             .padding(.leading, 10)
-            .background(.white)
+            .background(Theme.card)
 
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 HStack(spacing: 0) {
@@ -119,7 +119,7 @@ struct ProUpsellSheet: View {
                         .frame(width: 96)
                 }
                 .padding(.vertical, 7)
-                .background(.white)
+                .background(Theme.card)
                 Divider()
             }
         }
@@ -180,7 +180,7 @@ struct PaywallView: View {
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(Theme.ink)
                             .frame(width: 36, height: 36)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(.white))
+                            .background(RoundedRectangle(cornerRadius: 10).fill(Theme.card))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Theme.ink, lineWidth: 2))
                     }
                     .buttonStyle(.plain)
@@ -253,7 +253,7 @@ struct PaywallView: View {
                         .foregroundStyle(Theme.ink)
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
-                        .background(RoundedRectangle(cornerRadius: 13).fill(.white))
+                        .background(RoundedRectangle(cornerRadius: 13).fill(Theme.card))
                         .overlay(RoundedRectangle(cornerRadius: 13).stroke(Theme.ink, lineWidth: 2.5))
                 }
                 .buttonStyle(.plain)
@@ -323,7 +323,7 @@ struct PaywallView: View {
             .padding(10)
             .background(
                 RoundedRectangle(cornerRadius: 13)
-                    .fill(self.plan == plan ? Color(hex: 0xFDF3D6) : .white)
+                    .fill(self.plan == plan ? Theme.selectedRow : Theme.card)
             )
             .overlay(RoundedRectangle(cornerRadius: 13).stroke(Theme.ink, lineWidth: 2.5))
             .overlay(alignment: .topLeading) {

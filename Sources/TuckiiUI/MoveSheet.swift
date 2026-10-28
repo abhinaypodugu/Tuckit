@@ -30,7 +30,7 @@ struct MoveSheet: View {
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(Theme.ink)
                             .frame(width: 36, height: 36)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(.white))
+                            .background(RoundedRectangle(cornerRadius: 10).fill(Theme.card))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Theme.ink, lineWidth: 2))
                     }
                     .buttonStyle(.plain)
@@ -101,7 +101,7 @@ struct MoveSheet: View {
             .padding(10)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(selectedID == collection.id ? Color(hex: 0xFDF3D6) : .white)
+                    .fill(selectedID == collection.id ? Theme.selectedRow : Theme.card)
             )
             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.ink, lineWidth: 2))
         }

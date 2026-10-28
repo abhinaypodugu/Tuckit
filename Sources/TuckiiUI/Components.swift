@@ -76,7 +76,7 @@ struct CollectionCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(.white)
+                .fill(Theme.card)
                 .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.ink, lineWidth: 2.5))
         )
         .padding(.top, 10)
@@ -104,6 +104,7 @@ struct CollectionCard: View {
 
 struct BookmarkCard: View {
     let bookmark: Bookmark
+    var collectionChip: (name: String, colorHex: UInt32)? = nil
 
     private var accent: Color { PlaceholderStyle.color(for: bookmark.placeholderSeed) }
     private var initial: String {
@@ -135,6 +136,23 @@ struct BookmarkCard: View {
                         .rotationEffect(.degrees(-4))
                         .padding(7)
                 }
+                if let collectionChip {
+                    HStack(spacing: 5) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color(hex: collectionChip.colorHex))
+                            .frame(width: 10, height: 10)
+                            .overlay(RoundedRectangle(cornerRadius: 2).stroke(Theme.ink, lineWidth: 1))
+                        Text(collectionChip.name)
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(Theme.ink)
+                    }
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 4)
+                    .background(Theme.card)
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Theme.ink, lineWidth: 1.5))
+                    .padding(7)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                }
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(bookmark.title)
@@ -157,7 +175,7 @@ struct BookmarkCard: View {
             }
             .padding(10)
         }
-        .background(.white)
+        .background(Theme.card)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.ink, lineWidth: 2.5))
         .overlay(alignment: .topTrailing) {
@@ -166,7 +184,7 @@ struct BookmarkCard: View {
                     .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(Theme.ink)
                     .padding(5)
-                    .background(RoundedRectangle(cornerRadius: 6).fill(.white.opacity(0.92)))
+                    .background(RoundedRectangle(cornerRadius: 6).fill(Theme.card.opacity(0.92)))
                     .overlay(RoundedRectangle(cornerRadius: 6).stroke(Theme.ink, lineWidth: 1.5))
                     .padding(6)
             }

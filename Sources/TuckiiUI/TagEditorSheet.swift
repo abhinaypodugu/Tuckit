@@ -26,7 +26,7 @@ struct TagEditorSheet: View {
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(Theme.ink)
                             .frame(width: 36, height: 36)
-                            .background(RoundedRectangle(cornerRadius: 10).fill(.white))
+                            .background(RoundedRectangle(cornerRadius: 10).fill(Theme.card))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Theme.ink, lineWidth: 2))
                     }
                     .buttonStyle(.plain)
@@ -40,7 +40,7 @@ struct TagEditorSheet: View {
                         #endif
                         .padding(.horizontal, 12)
                         .frame(height: 44)
-                        .background(RoundedRectangle(cornerRadius: 10).fill(.white))
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Theme.card))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Theme.ink.opacity(0.35), lineWidth: 2))
                     Button {
                         addTag()
@@ -105,7 +105,7 @@ struct TagEditorSheet: View {
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(attached ? Color(hex: 0xDFF3E9) : .white)
+                    .fill(attached ? Theme.chipGreen : Theme.card)
             )
             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.ink, lineWidth: 2))
         }

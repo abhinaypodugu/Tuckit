@@ -8,6 +8,8 @@ public struct HomeView: View {
     @State private var showCollectionSort = false
     @State private var alertInfo: HomeAlertInfo?
     @State private var path: [UUID] = []
+    @State private var showSearch = false
+    @State private var showSettings = false
 
     public init() {}
 
@@ -36,6 +38,14 @@ public struct HomeView: View {
                 CreateCollectionSheet()
                     .environmentObject(store)
             }
+            .fullScreenCover(isPresented: $showSearch) {
+                SearchView()
+                    .environmentObject(store)
+            }
+            .fullScreenCover(isPresented: $showSettings) {
+                SettingsView()
+                    .environmentObject(store)
+            }
             .confirmationDialog("Sort collections", isPresented: $showCollectionSort, titleVisibility: .visible) {
                 ForEach(CollectionSort.allCases, id: \.self) { sort in
                     Button(sort.displayName) {
@@ -51,12 +61,16 @@ public struct HomeView: View {
 
     private var header: some View {
         HStack(spacing: 12) {
-            iconButton("gearshape") {}
+            iconButton("gearshape") {
+                showSettings = true
+            }
             Spacer()
             iconButton("folder.badge.gearshape") {
                 showCreateCollection = true
             }
-            iconButton("magnifyingglass") {}
+            iconButton("magnifyingglass") {
+                showSearch = true
+            }
         }
     }
 
@@ -85,7 +99,7 @@ public struct HomeView: View {
             .foregroundStyle(Theme.ink)
             .padding(.horizontal, 16)
             .frame(height: 56)
-            .background(RoundedRectangle(cornerRadius: 16).fill(.white))
+            .background(RoundedRectangle(cornerRadius: 16).fill(Theme.field))
             .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.ink, lineWidth: 2.5))
 
             Button(action: quickAdd) {
@@ -182,7 +196,7 @@ public struct HomeView: View {
                 .font(.system(size: 19, weight: .semibold))
                 .foregroundStyle(Theme.ink)
                 .frame(width: 48, height: 48)
-                .background(RoundedRectangle(cornerRadius: 14).fill(.white))
+                .background(RoundedRectangle(cornerRadius: 14).fill(Theme.field))
                 .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.ink, lineWidth: 2.5))
         }
         .buttonStyle(.plain)
