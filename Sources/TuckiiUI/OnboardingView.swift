@@ -626,34 +626,16 @@ public struct OnboardingView: View {
     }
 
     private func highlightedTitle(_ text: String, highlight: String?) -> some View {
-        Group {
-            if let highlight, let range = text.range(of: highlight) {
-                (
-                    Text(String(text[..<range.lowerBound]))
-                        + Text(String(text[range]))
-                        .foregroundColor(Color(hex: 0x111111))
-                        + Text(String(text[range.upperBound...]))
-                )
-                .background(alignment: .bottom) {
-                    GeometryReader { geometry in
-                        let total = geometry.size.width
-                        let lowerRatio = CGFloat(text.distance(from: text.startIndex, to: range.lowerBound)) / CGFloat(max(text.count, 1))
-                        let upperRatio = CGFloat(text.distance(from: text.startIndex, to: range.upperBound)) / CGFloat(max(text.count, 1))
-                        Rectangle()
-                            .fill(Theme.highlighter)
-                            .frame(width: max(0, (upperRatio - lowerRatio) * total * 0.9), height: 18)
-                            .offset(x: lowerRatio * total)
-                            .offset(y: -3)
-                    }
-                }
-            } else {
-                Text(text)
-            }
+        var attributed = AttributedString(text)
+        if let highlight, let range = attributed.range(of: highlight) {
+            attributed[range].backgroundColor = Theme.highlighter
+            attributed[range].foregroundColor = Color(hex: 0x111111)
         }
-        .font(.system(size: 38, weight: .black, design: .rounded))
-        .foregroundStyle(Theme.ink)
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity)
+        return Text(attributed)
+            .font(.system(size: 38, weight: .black, design: .rounded))
+            .foregroundStyle(Theme.ink)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
     }
 
     private func primaryButton(_ title: String, action: @escaping () -> Void) -> some View {

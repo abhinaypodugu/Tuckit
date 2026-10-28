@@ -76,6 +76,8 @@ Legend: ✅ implemented (code + CI build) · 🧪 unit-tested · ⛔ out of scop
 - ⛔ Share extension, iCloud/CloudKit sync, iPad sidebar layout, widgets, lifetime IAP
 - ⚠️ On-device install via xtool remains a manual user step (iPhone testing opted out)
 
+Verified by CI run #20 (commit f853dea): tests, iOS build, install, and 9 simulator screenshots (home, home-dark, onboarding, collection, details, search, settings, focus, paywall) all green; screenshots visually reviewed against the reference captures.
+
 Evidence locations: `Sources/TuckiiCore`, `Sources/TuckiiUI`, `Tests/TuckiiCoreTests`,
 `.github/workflows/simulator.yml`, screenshots artifact `simulator-screenshots`.
 Original behavior reference: `.research/shots` (91 captures from the real Android 1.6.0 app).
