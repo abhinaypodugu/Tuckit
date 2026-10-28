@@ -6,7 +6,7 @@ struct CreateCollectionSheet: View {
     @EnvironmentObject private var store: LibraryStore
     @Environment(\.dismiss) private var dismiss
 
-    var parentID: UUID?
+    var parentID: UUID? = nil
 
     @State private var name = ""
     @State private var selectedColor: UInt32 = 0xFFB020
