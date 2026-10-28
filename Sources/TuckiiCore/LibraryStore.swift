@@ -35,11 +35,11 @@ public final class LibraryStore: ObservableObject {
         var usage: DailyUsage
     }
 
-    @Published public private(set) var collections: [TuckiiCollection]
-    @Published public private(set) var bookmarks: [Bookmark]
-    @Published public private(set) var tags: [Tag]
-    @Published public private(set) var settings: LibrarySettings
-    @Published public private(set) var usage: DailyUsage
+    @Published public internal(set) var collections: [TuckiiCollection]
+    @Published public internal(set) var bookmarks: [Bookmark]
+    @Published public internal(set) var tags: [Tag]
+    @Published public internal(set) var settings: LibrarySettings
+    @Published public internal(set) var usage: DailyUsage
 
     private let storageURL: URL
 
