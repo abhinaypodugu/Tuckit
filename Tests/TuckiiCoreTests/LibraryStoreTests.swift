@@ -151,4 +151,18 @@ final class LibraryStoreTests: XCTestCase {
         XCTAssertTrue(store.tags.isEmpty)
         XCTAssertEqual(store.usage.links, 0)
     }
+
+    func testSeedDemoData() {
+        let store = makeStore()
+        store.seedDemoData(now: day)
+        XCTAssertEqual(store.collections.filter { !$0.isSystem }.count, 3)
+        XCTAssertEqual(
+            store.collections.filter { !$0.isSystem }.map(\.name).sorted(),
+            ["Home ideas", "Recipes", "Travel"]
+        )
+        XCTAssertEqual(store.bookmarks.count, 3)
+        XCTAssertEqual(store.bookmarks.filter(\.isPinned).count, 1)
+        XCTAssertEqual(store.totalUnseenCount, 2)
+        XCTAssertEqual(store.stats.pinned, 1)
+    }
 }

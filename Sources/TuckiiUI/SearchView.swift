@@ -157,7 +157,11 @@ public struct SearchView: View {
                 ) {
                     ForEach(store.recentlySaved(limit: 6)) { bookmark in
                         NavigationLink(value: bookmark) {
-                            BookmarkCard(bookmark: bookmark, collectionChip: chip(for: bookmark))
+                            BookmarkCard(
+                                bookmark: bookmark,
+                                collectionChip: chip(for: bookmark),
+                                tags: store.tags(for: bookmark.id)
+                            )
                         }
                         .buttonStyle(.plain)
                     }
@@ -188,7 +192,11 @@ public struct SearchView: View {
                 ) {
                     ForEach(results) { bookmark in
                         NavigationLink(value: bookmark) {
-                            BookmarkCard(bookmark: bookmark, collectionChip: chip(for: bookmark))
+                            BookmarkCard(
+                                bookmark: bookmark,
+                                collectionChip: chip(for: bookmark),
+                                tags: store.tags(for: bookmark.id)
+                            )
                         }
                         .buttonStyle(.plain)
                     }

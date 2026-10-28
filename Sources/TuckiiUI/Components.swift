@@ -106,6 +106,7 @@ struct CollectionCard: View {
 struct BookmarkCard: View {
     let bookmark: Bookmark
     var collectionChip: (name: String, colorHex: UInt32)? = nil
+    var tags: [Tag] = []
 
     private var accent: Color { PlaceholderStyle.color(for: bookmark.placeholderSeed) }
     private var initial: String {
@@ -126,6 +127,19 @@ struct BookmarkCard: View {
                             .font(.system(size: 42, weight: .black))
                             .foregroundStyle(Theme.ink.opacity(0.8))
                     )
+                if let imageURL = bookmark.imageURL {
+                    AsyncImage(url: imageURL) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } else {
+                            Color.clear
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+                }
                 if !bookmark.isSeen {
                     Text("NEW")
                         .font(.system(size: 9, weight: .heavy))
@@ -172,6 +186,20 @@ struct BookmarkCard: View {
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
+                }
+                if !tags.isEmpty {
+                    HStack(spacing: 4) {
+                        ForEach(tags.prefix(2)) { tag in
+                            Text("#\(tag.name)")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundStyle(Theme.ink)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .background(Theme.chipGreen)
+                                .clipShape(RoundedRectangle(cornerRadius: 4))
+                                .overlay(RoundedRectangle(cornerRadius: 4).stroke(Theme.ink.opacity(0.6), lineWidth: 1))
+                        }
+                    }
                 }
             }
             .padding(10)

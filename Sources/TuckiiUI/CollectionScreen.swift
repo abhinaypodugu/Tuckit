@@ -294,7 +294,7 @@ public struct CollectionScreen: View {
                         Button {
                             toggleSelection(bookmark.id)
                         } label: {
-                            BookmarkCard(bookmark: bookmark)
+                            BookmarkCard(bookmark: bookmark, tags: store.tags(for: bookmark.id))
                                 .overlay(alignment: .topLeading) {
                                     selectionMark(isSelected: selection.contains(bookmark.id))
                                 }
@@ -302,7 +302,7 @@ public struct CollectionScreen: View {
                         .buttonStyle(.plain)
                     } else {
                         NavigationLink(value: bookmark) {
-                            BookmarkCard(bookmark: bookmark)
+                            BookmarkCard(bookmark: bookmark, tags: store.tags(for: bookmark.id))
                         }
                         .buttonStyle(.plain)
                     }
