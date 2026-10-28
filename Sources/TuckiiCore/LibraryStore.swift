@@ -262,6 +262,20 @@ public final class LibraryStore: ObservableObject {
         persist()
     }
 
+    @MainActor
+    public func refreshMetadata(for bookmarkID: UUID, force: Bool = false) async {
+        guard let bookmark = bookmark(bookmarkID), let url = bookmark.url else { return }
+        if !force, bookmark.metadataState != .pending {
+            return
+        }
+        do {
+            let metadata = try await MetadataScraper().fetch(from: url)
+            applyMetadata(metadata, to: bookmarkID)
+        } catch {
+            markMetadataFailed(bookmarkID)
+        }
+    }
+
     public func updateTitle(_ title: String, for bookmarkID: UUID, now: Date = Date()) {
         guard let index = bookmarks.firstIndex(where: { $0.id == bookmarkID }) else { return }
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)

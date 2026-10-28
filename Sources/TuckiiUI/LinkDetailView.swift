@@ -411,19 +411,14 @@ struct LinkDetailView: View {
 
     @MainActor
     private func loadMetadata(force: Bool) async {
-        guard let bookmark, let url = bookmark.url else { return }
+        guard let bookmark, bookmark.url != nil else { return }
         if !force, bookmark.metadataState != .pending {
             return
         }
         guard !isRefreshing else { return }
         isRefreshing = true
         defer { isRefreshing = false }
-        do {
-            let metadata = try await MetadataScraper().fetch(from: url)
-            store.applyMetadata(metadata, to: bookmarkID)
-        } catch {
-            store.markMetadataFailed(bookmarkID)
-        }
+        await store.refreshMetadata(for: bookmarkID, force: force)
     }
 
     private static let dateFormatter: DateFormatter = {

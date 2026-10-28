@@ -252,9 +252,12 @@ public struct HomeView: View {
             return
         }
         do {
-            _ = try store.addBookmark(url: url)
+            let bookmark = try store.addBookmark(url: url)
             urlText = ""
             path.append(store.unsorted.id)
+            Task {
+                await store.refreshMetadata(for: bookmark.id)
+            }
         } catch let error as LibraryError {
             alertInfo = HomeAlertInfo(title: error.title, message: error.message)
         } catch {
