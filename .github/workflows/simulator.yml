@@ -78,10 +78,12 @@ jobs:
         run: |
           UDID="${{ steps.sim.outputs.udid }}"
           mkdir -p artifacts
-          for screen in home onboarding collection details search settings focus paywall; do
+          for screen in home home-dark onboarding collection details search settings focus paywall; do
             xcrun simctl terminate "$UDID" com.example.tuckii 2>/dev/null || true
             if [ "$screen" = "home" ]; then
               xcrun simctl launch "$UDID" com.example.tuckii --seed-demo
+            elif [ "$screen" = "home-dark" ]; then
+              xcrun simctl launch "$UDID" com.example.tuckii --seed-demo --dark
             else
               xcrun simctl launch "$UDID" com.example.tuckii "--screen=$screen"
             fi

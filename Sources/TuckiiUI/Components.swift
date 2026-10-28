@@ -140,6 +140,16 @@ struct BookmarkCard: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipped()
                 }
+                if bookmark.metadataState == .pending {
+                    Text("SAVING...")
+                        .font(.system(size: 10, weight: .heavy))
+                        .foregroundStyle(Theme.ink)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(Theme.ctaYellow))
+                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Theme.ink, lineWidth: 2))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
                 if !bookmark.isSeen {
                     Text("NEW")
                         .font(.system(size: 9, weight: .heavy))

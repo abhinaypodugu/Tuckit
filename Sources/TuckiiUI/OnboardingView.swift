@@ -19,7 +19,7 @@ public struct OnboardingView: View {
     @State private var demoCollection = "Unsorted"
     @State private var focusIndex = 0
 
-    private let totalPages = 6
+    private let totalPages = 7
 
     private let demoCards: [(source: String, title: String, summary: String, tag: String, collection: String, color: UInt32)] = [
         ("social.example", "Quick dinner recipe", "5 vegetables, 1 pan, 15 minutes.", "", "Recipes", 0xFFCF5C),
@@ -65,7 +65,7 @@ public struct OnboardingView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            if page >= 3 && page <= 4 {
+            if page >= 3 && page <= 5 {
                 Button("Skip") {
                     withAnimation { page = totalPages - 1 }
                 }
@@ -92,6 +92,8 @@ public struct OnboardingView: View {
         case 4:
             focusDemoPage
         case 5:
+            remindersPage
+        case 6:
             paywallPage
         default:
             introPage
@@ -530,6 +532,90 @@ public struct OnboardingView: View {
         }
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 20).fill(Color(hex: 0x0C0C0E)))
+    }
+
+    private var remindersPage: some View {
+        VStack(spacing: 16) {
+            Spacer(minLength: 4)
+            highlightedTitle("Never forget\nwhat you save!", highlight: "what you save!")
+            Text("Tuckii can nudge you to review new saves — gently.")
+                .font(.system(size: 16))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            ZStack {
+                RoundedRectangle(cornerRadius: 28)
+                    .fill(Color(hex: 0x111114))
+                    .frame(width: 230, height: 340)
+                    .overlay(alignment: .top) {
+                        Capsule()
+                            .fill(Color.white.opacity(0.16))
+                            .frame(width: 70, height: 6)
+                            .padding(.top, 10)
+                    }
+                VStack(spacing: 8) {
+                    HStack(spacing: 8) {
+                        RoundedRectangle(cornerRadius: 7)
+                            .fill(Theme.ctaYellow)
+                            .frame(width: 26, height: 26)
+                            .overlay(
+                                Image(systemName: "bell.fill")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundStyle(Color(hex: 0x111111))
+                            )
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Tuckii")
+                                .font(.system(size: 11, weight: .heavy))
+                                .foregroundStyle(Theme.ink)
+                            Text("now")
+                                .font(.system(size: 9))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                    }
+                    Text("Don't forget your saves")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(Theme.ink)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("Swipe through your unseen saves now.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(12)
+                .background(RoundedRectangle(cornerRadius: 14).fill(Theme.card))
+                .padding(.horizontal, 22)
+                .offset(y: -30)
+            }
+            .padding(.vertical, 6)
+
+            Spacer(minLength: 0)
+            primaryButton("Turn on reminders") {
+                requestReminderPermission()
+            }
+            Button {
+                withAnimation { page = 6 }
+            } label: {
+                Text("Maybe later")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Theme.ink)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 46)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private func requestReminderPermission() {
+        #if canImport(UserNotifications)
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in
+            DispatchQueue.main.async {
+                withAnimation { page = 6 }
+            }
+        }
+        #else
+        page = 6
+        #endif
     }
 
     private var paywallPage: some View {

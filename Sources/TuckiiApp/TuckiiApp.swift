@@ -24,6 +24,9 @@ struct TuckiiApp: App {
             UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
             store.seedDemoData()
         }
+        if arguments.contains("--dark") {
+            store.setDarkMode(true)
+        }
         _store = StateObject(wrappedValue: store)
     }
 
