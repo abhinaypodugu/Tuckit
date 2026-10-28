@@ -419,8 +419,8 @@ Implemented (maps to §2/§3):
   (export JSON via fileExporter, restore JSON, import CSV/HTML/JSON), How To guides,
   Pro upsell modal + paywall (simulated purchase), Focus Mode deck, onboarding carousel
   with interactive save demo, focus demo and paywall.
-- CI: GitHub Actions macOS runner → XcodeGen → xcodebuild → simctl → 8 screen captures
-  (home, onboarding, collection, details, search, settings, focus, paywall).
+- CI: GitHub Actions macos-14 runner → XcodeGen → xcodebuild → simctl → 9 screen captures
+  (home, home-dark, onboarding, collection, details, search, settings, focus, paywall).
 
 Known deviations / not yet done:
 - No iOS Share Extension or iCloud sync (out of scope by decision); quick save is the
@@ -432,3 +432,12 @@ Known deviations / not yet done:
 - Haptics wired for save + pin; reminders schedule one 24h notification.
 - iPad sidebar layout, widgets, sharing collections: not implemented.
 - App icon/mascot are placeholders (no copied artwork).
+
+Update log (latest):
+- Collection overflow fully functional: Add Link dialog, bulk Select Links (All/Share/Move/Delete),
+  Create Sub-collection (Pro → real sheet with parentID), Share Collection (Pro → text share sheet),
+  Sort saves, Delete Collection (moves saves to Unsorted), subcollection chips with navigation.
+- Cards now show OG thumbnails when available, SAVING... badge while metadata is pending,
+  NEW ribbons, pin badges, tag chips.
+- Onboarding gained the reminders pitch page (system permission request) → 7 pages incl. paywall.
+- CI captures a dark-mode home screenshot; runs cancel superseded builds; failure logs are artifacts.
