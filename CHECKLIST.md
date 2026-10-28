@@ -71,6 +71,7 @@ Legend: ✅ implemented (code + CI build) · 🧪 unit-tested · ⛔ out of scop
 - ✅ Export backup format with tags/notes/pins 🧪 round-trip
 
 ## Platform / delivery
+- ✅ CI also exports an unsigned device `.ipa` artifact (`tuckii-ipa`) for Sideloadly installs with a free Apple ID (7-day signature).
 - ✅ SwiftPM package (xtool-ready) + XcodeGen project + `xtool.yml`
 - ✅ GitHub Actions: unit tests, iOS Simulator build, 9 screenshots (incl. dark mode)
 - ⛔ Share extension, iCloud/CloudKit sync, iPad sidebar layout, widgets, lifetime IAP

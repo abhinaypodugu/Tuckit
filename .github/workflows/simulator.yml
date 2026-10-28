@@ -127,3 +127,20 @@ jobs:
           name: simulator-screenshots
           path: artifacts
           if-no-files-found: warn
+
+      - name: Build unsigned device app
+        run: |
+          set -o pipefail
+          xcodebuild -project Tuckii.xcodeproj -scheme Tuckii -configuration Release \
+            -destination 'generic/platform=iOS' -derivedDataPath build-device \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build 2>&1 | tee device-build.log
+          mkdir -p ipa/Payload
+          cp -R build-device/Build/Products/Release-iphoneos/Tuckii.app ipa/Payload/
+          (cd ipa && zip -qr Tuckii-unsigned.ipa Payload)
+
+      - name: Upload unsigned ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: tuckii-ipa
+          path: ipa/Tuckii-unsigned.ipa
+          if-no-files-found: error
