@@ -6,9 +6,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ios-simulator-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   unit-tests:
-    runs-on: macos-15
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - name: Run package tests
@@ -24,7 +28,7 @@ jobs:
           if-no-files-found: warn
 
   build-and-screenshot:
-    runs-on: macos-15
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
