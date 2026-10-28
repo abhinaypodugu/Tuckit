@@ -6,6 +6,8 @@ struct CreateCollectionSheet: View {
     @EnvironmentObject private var store: LibraryStore
     @Environment(\.dismiss) private var dismiss
 
+    var parentID: UUID?
+
     @State private var name = ""
     @State private var selectedColor: UInt32 = 0xFFB020
     @State private var selectedIcon: TuckiiCollection.Icon = .folder
@@ -156,7 +158,7 @@ struct CreateCollectionSheet: View {
 
     private func create() {
         do {
-            _ = try store.createCollection(name: name, colorHex: selectedColor, icon: selectedIcon)
+            _ = try store.createCollection(name: name, colorHex: selectedColor, icon: selectedIcon, parentID: parentID)
             dismiss()
         } catch let error as LibraryError {
             errorMessage = error.message

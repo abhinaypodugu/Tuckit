@@ -296,7 +296,13 @@ public struct SettingsView: View {
                 icon: "cloud",
                 title: "Cloud Sync",
                 subtitle: "Sync your library across devices",
-                action: { showCloudSyncUpsell = true }
+                action: {
+                    if store.isPro {
+                        alertInfo = SettingsAlert(title: "Cloud Sync", message: "Sync is out of scope for this clone — use Backup & Restore to move your library.")
+                    } else {
+                        showCloudSyncUpsell = true
+                    }
+                }
             )
             linkRow(
                 icon: "archivebox",

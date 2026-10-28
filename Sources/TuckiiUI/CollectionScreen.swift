@@ -22,6 +22,8 @@ public struct CollectionScreen: View {
     @State private var showDeleteCollectionConfirm = false
     @State private var showDeleteSelectedConfirm = false
     @State private var showBulkMoveSheet = false
+    @State private var showCreateSubcollection = false
+    @State private var showShareSheet = false
     @State private var alertInfo: CollectionAlert?
 
     private var collection: TuckiiCollection? { store.collection(collectionID) }
@@ -43,6 +45,7 @@ public struct CollectionScreen: View {
                             selectToolbar
                         } else {
                             header(collection)
+                            subcollectionRow
                         }
                         if pinned.isEmpty && saves.isEmpty {
                             emptyState
@@ -79,6 +82,14 @@ public struct CollectionScreen: View {
                 selection.removeAll()
             }
             .environmentObject(store)
+        }
+        .sheet(isPresented: $showCreateSubcollection) {
+            CreateCollectionSheet(parentID: collectionID)
+                .environmentObject(store)
+        }
+        .sheet(isPresented: $showShareSheet) {
+            CollectionShareSheet(collectionID: collectionID)
+                .environmentObject(store)
         }
         .confirmationDialog("Sort saves", isPresented: $showSortSheet, titleVisibility: .visible) {
             if let collection {
@@ -163,14 +174,22 @@ public struct CollectionScreen: View {
                     Label("Select Links", systemImage: "checkmark.square")
                 }
                 Button {
-                    proFeature = .subCollections
-                    showProUpsell = true
+                    if store.isPro {
+                        showCreateSubcollection = true
+                    } else {
+                        proFeature = .subCollections
+                        showProUpsell = true
+                    }
                 } label: {
                     Label("Create Sub-collection", systemImage: "folder.badge.plus")
                 }
                 Button {
-                    proFeature = .shareCollection
-                    showProUpsell = true
+                    if store.isPro {
+                        showShareSheet = true
+                    } else {
+                        proFeature = .shareCollection
+                        showProUpsell = true
+                    }
                 } label: {
                     Label("Share Collection", systemImage: "square.and.arrow.up")
                 }
@@ -197,8 +216,42 @@ public struct CollectionScreen: View {
         }
     }
 
-    private var selectToolbar: some View {
-        HStack(spacing: 8) {
+    @ViewBuilder
+    private var subcollectionRow: some View {
+        let subs = store.subcollections(of: collectionID)
+        if !subs.isEmpty {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(subs) { sub in
+                        NavigationLink(value: sub.id) {
+                            HStack(spacing: 6) {
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(Color(hex: sub.colorHex))
+                                    .frame(width: 10, height: 10)
+                                    .overlay(RoundedRectangle(cornerRadius: 3).stroke(Theme.ink, lineWidth: 1))
+                                Text(sub.name)
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(Theme.ink)
+                                Text("\(store.bookmarkCount(in: sub.id))")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 9)
+                                    .fill(Theme.card)
+                                    .overlay(RoundedRectangle(cornerRadius: 9).stroke(Theme.ink, lineWidth: 1.8))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+    }
+
+    private var selectToolbar: some View {        HStack(spacing: 8) {
             Text("\(selection.count) selected")
                 .font(.system(size: 13, weight: .bold))
                 .foregroundStyle(Theme.ink)

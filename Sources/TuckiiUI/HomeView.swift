@@ -169,13 +169,22 @@ public struct HomeView: View {
                 showCollectionSort = true
             } label: {
                 HStack(spacing: 4) {
-                    Text(store.settings.collectionSort.displayName.components(separatedBy: " ").first ?? "Oldest")
+                    Text(collectionSortLabel)
                     Image(systemName: "chevron.down")
                 }
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(.gray)
             }
             .buttonStyle(.plain)
+        }
+    }
+
+    private var collectionSortLabel: String {
+        switch store.settings.collectionSort {
+        case .oldestFirst: return "Oldest"
+        case .newestFirst: return "Newest"
+        case .nameAZ: return "Name"
+        case .recentlySaved: return "Saved"
         }
     }
 
