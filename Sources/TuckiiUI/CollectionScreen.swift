@@ -219,7 +219,9 @@ public struct CollectionScreen: View {
             } else {
                 ShareLink(
                     items: selectedURLs,
-                    preview: SharePreview("Tuckii links", image: Image(systemName: "link"))
+                    preview: { url in
+                        SharePreview(url.host ?? "Tuckii link", image: Image(systemName: "link"))
+                    }
                 ) {
                     selectActionLabel("Share", enabled: true)
                 }
