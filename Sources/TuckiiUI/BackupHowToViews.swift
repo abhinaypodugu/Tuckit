@@ -2,12 +2,51 @@ import SwiftUI
 import UniformTypeIdentifiers
 import TuckiiCore
 
+struct BackupDocument: FileDocument {
+    static var readableContentTypes: [UTType] { [.json] }
+
+    var data: Data
+
+    init(data: Data) {
+        self.data = data
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        data = configuration.file.regularFileContents ?? Data()
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        FileWrapper(regularFileWithContents: data)
+    }
+}
+
 struct BackupView: View {
     @EnvironmentObject private var store: LibraryStore
     @Environment(\.dismiss) private var dismiss
 
+    private enum ImporterMode: Identifiable {
+        case importOther
+        case restore
+
+        var id: Int {
+            switch self {
+            case .importOther: return 0
+            case .restore: return 1
+            }
+        }
+
+        var types: [UTType] {
+            switch self {
+            case .importOther: return [.commaSeparatedText, .html, .json]
+            case .restore: return [.json]
+            }
+        }
+    }
+
     @State private var gatedFeature: ProFeature?
-    @State private var showImporter = false
+    @State private var importerMode: ImporterMode?
+    @State private var exportDocument: BackupDocument?
+    @State private var showExporter = false
     @State private var alertInfo: BackupAlert?
 
     var body: some View {
@@ -21,17 +60,29 @@ struct BackupView: View {
                         icon: "square.and.arrow.up",
                         title: "Export Backup",
                         subtitle: "Export a backup file you can save anywhere",
-                        gated: .exportBackup
-                    )
+                        gated: true
+                    ) {
+                        if store.isPro {
+                            prepareExport()
+                        } else {
+                            gatedFeature = .exportBackup
+                        }
+                    }
                     backupRow(
                         icon: "arrow.down.circle",
                         title: "Restore from Backup",
-                        subtitle: "Restore from a Tuckii backup (.zip or .json)",
-                        gated: .exportBackup
-                    )
+                        subtitle: "Restore from a Tuckii backup (.json)",
+                        gated: true
+                    ) {
+                        if store.isPro {
+                            importerMode = .restore
+                        } else {
+                            gatedFeature = .exportBackup
+                        }
+                    }
                     sectionTitle("IMPORT FROM OTHER APPS")
                     Button {
-                        showImporter = true
+                        importerMode = .importOther
                     } label: {
                         rowContent(
                             icon: "tray.and.arrow.down",
@@ -50,18 +101,26 @@ struct BackupView: View {
                 .environmentObject(store)
         }
         .fileImporter(
-            isPresented: $showImporter,
-            allowedContentTypes: [.commaSeparatedText, .html, .json],
+            isPresented: Binding(
+                get: { importerMode != nil },
+                set: { if !$0 { importerMode = nil } }
+            ),
+            allowedContentTypes: importerMode?.types ?? [.json],
             allowsMultipleSelection: false
+        ) { result in
+            handleImport(result)
+        }
+        .fileExporter(
+            isPresented: $showExporter,
+            document: exportDocument,
+            contentType: .json,
+            defaultFilename: "Tuckii-backup"
         ) { result in
             switch result {
             case .success:
-                alertInfo = BackupAlert(
-                    title: "Import",
-                    message: "File picked. Import parsing lands in the next milestone."
-                )
+                alertInfo = BackupAlert(title: "Backup exported", message: "Your backup file has been saved.")
             case .failure(let error):
-                alertInfo = BackupAlert(title: "Import failed", message: error.localizedDescription)
+                alertInfo = BackupAlert(title: "Export failed", message: error.localizedDescription)
             }
         }
         .alert(item: $alertInfo) { info in
@@ -96,13 +155,15 @@ struct BackupView: View {
             .foregroundStyle(Theme.ink.opacity(0.55))
     }
 
-    private func backupRow(icon: String, title: String, subtitle: String, gated: ProFeature?) -> some View {
-        Button {
-            if let gated {
-                gatedFeature = gated
-            }
-        } label: {
-            rowContent(icon: icon, title: title, subtitle: subtitle, crown: gated != nil)
+    private func backupRow(
+        icon: String,
+        title: String,
+        subtitle: String,
+        gated: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            rowContent(icon: icon, title: title, subtitle: subtitle, crown: gated)
         }
         .buttonStyle(.plain)
     }
@@ -142,6 +203,43 @@ struct BackupView: View {
                 .fill(Theme.card)
                 .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.ink, lineWidth: 2.5))
         )
+    }
+
+    private func prepareExport() {
+        guard let data = store.exportBackupData() else {
+            alertInfo = BackupAlert(title: "Export failed", message: "Could not build a backup file.")
+            return
+        }
+        exportDocument = BackupDocument(data: data)
+        showExporter = true
+    }
+
+    private func handleImport(_ result: Result<[URL], Error>) {
+        let mode = importerMode
+        importerMode = nil
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            let accessing = url.startAccessingSecurityScopedResource()
+            defer {
+                if accessing { url.stopAccessingSecurityScopedResource() }
+            }
+            do {
+                let data = try Data(contentsOf: url)
+                let ext = url.pathExtension
+                let outcome = try store.importBookmarks(from: data, fileExtension: ext)
+                let skippedText = outcome.skipped > 0 ? " Skipped \(outcome.skipped) duplicates." : ""
+                let folderText = outcome.collectionsCreated > 0 ? " Created \(outcome.collectionsCreated) collections." : ""
+                alertInfo = BackupAlert(
+                    title: mode == .restore ? "Backup restored" : "Import complete",
+                    message: "Imported \(outcome.imported) bookmarks.\(folderText)\(skippedText)"
+                )
+            } catch {
+                alertInfo = BackupAlert(title: "Import failed", message: error.localizedDescription)
+            }
+        case .failure(let error):
+            alertInfo = BackupAlert(title: "Import failed", message: error.localizedDescription)
+        }
     }
 }
 
@@ -247,7 +345,6 @@ struct QuickSaveGuideView: View {
                 .padding(20)
             }
         }
-        .navigationBarBackButtonHidden(false)
     }
 
     private func step(_ number: Int, _ text: String) -> some View {
