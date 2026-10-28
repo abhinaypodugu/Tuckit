@@ -10,6 +10,7 @@ public struct HomeView: View {
     @State private var path: [UUID] = []
     @State private var showSearch = false
     @State private var showSettings = false
+    @State private var showFocus = false
 
     public init() {}
 
@@ -22,6 +23,9 @@ public struct HomeView: View {
                         header
                         title
                         quickSaveBar
+                        if store.totalUnseenCount > 0 {
+                            reviewBanner
+                        }
                         collectionsHeader
                         collectionsContent
                         Spacer(minLength: 32)
@@ -44,6 +48,10 @@ public struct HomeView: View {
             }
             .fullScreenCover(isPresented: $showSettings) {
                 SettingsView()
+                    .environmentObject(store)
+            }
+            .fullScreenCover(isPresented: $showFocus) {
+                FocusModeView(collectionID: nil)
                     .environmentObject(store)
             }
             .confirmationDialog("Sort collections", isPresented: $showCollectionSort, titleVisibility: .visible) {
@@ -112,6 +120,42 @@ public struct HomeView: View {
             }
             .buttonStyle(.plain)
         }
+    }
+
+    private var reviewBanner: some View {
+        Button {
+            showFocus = true
+        } label: {
+            HStack(spacing: 12) {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Theme.green)
+                    .frame(width: 42, height: 42)
+                    .overlay(
+                        Image(systemName: "bell")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(Theme.ink)
+                    )
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(store.totalUnseenCount) new \(store.totalUnseenCount == 1 ? "save" : "saves") waiting")
+                        .font(.system(size: 16, weight: .heavy))
+                        .foregroundStyle(Theme.ink)
+                    Text("Review now")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.ink.opacity(0.55))
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(Theme.ink.opacity(0.6))
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(Theme.banner)
+                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.ink, lineWidth: 2.5))
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     private var collectionsHeader: some View {

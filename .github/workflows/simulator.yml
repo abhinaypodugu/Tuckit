@@ -55,8 +55,8 @@ jobs:
       - name: Install and launch
         run: |
           xcrun simctl install "${{ steps.sim.outputs.udid }}" build/Build/Products/Debug-iphonesimulator/Tuckii.app
-          xcrun simctl launch "${{ steps.sim.outputs.udid }}" com.example.tuckii
-          sleep 6
+          xcrun simctl launch "${{ steps.sim.outputs.udid }}" com.example.tuckii --seed-demo
+          sleep 8
 
       - name: Screenshot
         run: |

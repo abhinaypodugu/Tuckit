@@ -429,6 +429,53 @@ public final class LibraryStore: ObservableObject {
         persist()
     }
 
+    public func seedDemoData(now: Date = Date()) {
+        guard bookmarks.isEmpty, collections.count <= 1 else { return }
+        let recipes = (try? createCollection(name: "Recipes", colorHex: 0xFFB020, icon: .coffee, now: now)) ?? unsorted
+        let ideas = (try? createCollection(name: "Home ideas", colorHex: 0x22BFA6, icon: .heart, now: now.addingTimeInterval(1))) ?? unsorted
+        let travel = (try? createCollection(name: "Travel", colorHex: 0x4E8DF5, icon: .plane, now: now.addingTimeInterval(2))) ?? unsorted
+
+        if let url = URL(string: "https://social.example/reel/quick-dinner-recipe"),
+           let bookmark = try? addBookmark(url: url, to: recipes.id, isPinned: true, now: now) {
+            applyMetadata(
+                LinkMetadata(
+                    title: "Quick dinner recipe",
+                    summary: "5 vegetables, 1 pan, 15 minutes.",
+                    siteName: "social.example"
+                ),
+                to: bookmark.id,
+                now: now
+            )
+        }
+
+        if let url = URL(string: "https://pinterest.example/cozy-reading-corner"),
+           let bookmark = try? addBookmark(url: url, to: ideas.id, now: now.addingTimeInterval(30)) {
+            applyMetadata(
+                LinkMetadata(
+                    title: "Cozy reading corner ideas",
+                    summary: "A lamp, a chair and a shelf. Everything else follows.",
+                    siteName: "Pinterest"
+                ),
+                to: bookmark.id,
+                now: now.addingTimeInterval(30)
+            )
+            markSeen(bookmark.id, now: now)
+        }
+
+        if let url = URL(string: "https://travel.example/kyoto-early"),
+           let bookmark = try? addBookmark(url: url, to: travel.id, now: now.addingTimeInterval(60)) {
+            applyMetadata(
+                LinkMetadata(
+                    title: "Kyoto travel tip: go early",
+                    summary: "Visit Higashiyama at 7am to avoid the crowds.",
+                    siteName: "travel.example"
+                ),
+                to: bookmark.id,
+                now: now.addingTimeInterval(60)
+            )
+        }
+    }
+
     private func sortCollections(_ input: [TuckiiCollection]) -> [TuckiiCollection] {
         switch settings.collectionSort {
         case .oldestFirst:

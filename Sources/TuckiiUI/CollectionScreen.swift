@@ -5,6 +5,8 @@ struct CollectionScreen: View {
     @EnvironmentObject private var store: LibraryStore
     let collectionID: UUID
 
+    @State private var showFocus = false
+
     private var collection: TuckiiCollection? { store.collection(collectionID) }
     private var pinned: [Bookmark] { store.pinnedBookmarks(in: collectionID) }
     private var saves: [Bookmark] { store.unpinnedBookmarks(in: collectionID) }
@@ -25,6 +27,17 @@ struct CollectionScreen: View {
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
+                            Button {
+                                showFocus = true
+                            } label: {
+                                Image(systemName: "square.stack.3d.up")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundStyle(Theme.ink)
+                                    .frame(width: 42, height: 42)
+                                    .background(RoundedRectangle(cornerRadius: 12).fill(Theme.ctaYellow))
+                                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.ink, lineWidth: 2.5))
+                            }
+                            .buttonStyle(.plain)
                             Menu {
                                 ForEach(SaveSort.allCases, id: \.self) { sort in
                                     Button(sort.displayName) {
@@ -61,6 +74,10 @@ struct CollectionScreen: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Bookmark.self) { bookmark in
             LinkDetailView(bookmarkID: bookmark.id)
+        }
+        .fullScreenCover(isPresented: $showFocus) {
+            FocusModeView(collectionID: collectionID)
+                .environmentObject(store)
         }
         .toolbar {
             ToolbarItem(placement: .principal) {

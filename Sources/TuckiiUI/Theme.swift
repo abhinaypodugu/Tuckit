@@ -18,6 +18,7 @@ public enum Theme {
     public static let chipGreen = dynamic(light: 0xDFF3E9, dark: 0x1F3A2F)
     public static let statBlue = dynamic(light: 0xD8ECFA, dark: 0x1E3A4C)
     public static let statYellow = dynamic(light: 0xFBE3A6, dark: 0x4A3B12)
+    public static let banner = dynamic(light: 0xE9F7EF, dark: 0x16281F)
 
     private static func dynamic(light: UInt32, dark: UInt32) -> Color {
         #if canImport(UIKit)
