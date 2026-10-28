@@ -5,10 +5,14 @@ import TuckiiCore
 import UserNotifications
 #endif
 
-struct OnboardingView: View {
+public struct OnboardingView: View {
     @EnvironmentObject private var store: LibraryStore
 
     let onFinish: () -> Void
+
+    public init(onFinish: @escaping () -> Void) {
+        self.onFinish = onFinish
+    }
 
     @State private var page = 0
     @State private var demoStage = 0

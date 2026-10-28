@@ -2,11 +2,15 @@ import SwiftUI
 import Foundation
 import TuckiiCore
 
-struct LinkDetailView: View {
+public struct LinkDetailView: View {
     @EnvironmentObject private var store: LibraryStore
     @Environment(\.dismiss) private var dismiss
 
     let bookmarkID: UUID
+
+    public init(bookmarkID: UUID) {
+        self.bookmarkID = bookmarkID
+    }
 
     @State private var editingTitle = false
     @State private var titleDraft = ""

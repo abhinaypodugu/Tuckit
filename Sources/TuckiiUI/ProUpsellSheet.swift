@@ -150,10 +150,14 @@ struct ProUpsellSheet: View {
     }
 }
 
-struct PaywallView: View {
+public struct PaywallView: View {
     @EnvironmentObject private var store: LibraryStore
 
     let onClose: () -> Void
+
+    public init(onClose: @escaping () -> Void) {
+        self.onClose = onClose
+    }
 
     private enum Plan: String, CaseIterable {
         case monthly, yearly

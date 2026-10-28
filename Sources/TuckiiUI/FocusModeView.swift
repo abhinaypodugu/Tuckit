@@ -2,11 +2,15 @@ import SwiftUI
 import Foundation
 import TuckiiCore
 
-struct FocusModeView: View {
+public struct FocusModeView: View {
     @EnvironmentObject private var store: LibraryStore
     @Environment(\.dismiss) private var dismiss
 
     let collectionID: UUID?
+
+    public init(collectionID: UUID?) {
+        self.collectionID = collectionID
+    }
 
     @State private var deck: [UUID] = []
     @State private var index = 0

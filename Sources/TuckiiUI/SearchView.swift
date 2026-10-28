@@ -2,11 +2,13 @@ import SwiftUI
 import Foundation
 import TuckiiCore
 
-struct SearchView: View {
+public struct SearchView: View {
     @EnvironmentObject private var store: LibraryStore
     @Environment(\.dismiss) private var dismiss
 
     @State private var query = ""
+
+    public init() {}
 
     private var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespacesAndNewlines)

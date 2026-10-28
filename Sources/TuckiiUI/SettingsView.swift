@@ -8,9 +8,11 @@ import UIKit
 import UserNotifications
 #endif
 
-struct SettingsView: View {
+public struct SettingsView: View {
     @EnvironmentObject private var store: LibraryStore
     @Environment(\.dismiss) private var dismiss
+
+    public init() {}
 
     @State private var showPaywall = false
     @State private var showCloudSyncUpsell = false

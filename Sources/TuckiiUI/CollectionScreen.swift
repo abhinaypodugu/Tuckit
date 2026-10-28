@@ -2,10 +2,14 @@ import SwiftUI
 import Foundation
 import TuckiiCore
 
-struct CollectionScreen: View {
+public struct CollectionScreen: View {
     @EnvironmentObject private var store: LibraryStore
     @Environment(\.dismiss) private var dismiss
     let collectionID: UUID
+
+    public init(collectionID: UUID) {
+        self.collectionID = collectionID
+    }
 
     @State private var showFocus = false
     @State private var showProUpsell = false
