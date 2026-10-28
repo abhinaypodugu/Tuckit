@@ -7,11 +7,21 @@ struct CreateCollectionSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var parentID: UUID? = nil
+    var editing: TuckiiCollection? = nil
 
     @State private var name = ""
     @State private var selectedColor: UInt32 = 0xFFB020
     @State private var selectedIcon: TuckiiCollection.Icon = .folder
     @State private var errorMessage: String?
+
+    init(parentID: UUID? = nil, editing: TuckiiCollection? = nil) {
+        self.parentID = parentID
+        self.editing = editing
+        _name = State(initialValue: editing?.name ?? "")
+        _selectedColor = State(initialValue: editing?.colorHex ?? 0xFFB020)
+        _selectedIcon = State(initialValue: editing?.icon ?? .folder)
+        _errorMessage = State(initialValue: nil)
+    }
 
     private let colorColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 8)
     private let iconColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 8)
@@ -22,7 +32,7 @@ struct CreateCollectionSheet: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 20) {
                     HStack {
-                        Text("Add new collection")
+                        Text(editing == nil ? "Add new collection" : "Edit collection")
                             .font(.system(size: 24, weight: .black, design: .rounded))
                             .foregroundStyle(Theme.ink)
                         Spacer()
@@ -70,7 +80,7 @@ struct CreateCollectionSheet: View {
                     }
 
                     Button(action: create) {
-                        Text("Create collection")
+                        Text(editing == nil ? "Create collection" : "Save changes")
                             .font(.system(size: 17, weight: .bold))
                             .foregroundStyle(Theme.ink)
                             .frame(maxWidth: .infinity)
@@ -158,7 +168,11 @@ struct CreateCollectionSheet: View {
 
     private func create() {
         do {
-            _ = try store.createCollection(name: name, colorHex: selectedColor, icon: selectedIcon, parentID: parentID)
+            if let editing {
+                try store.updateCollection(editing.id, name: name, colorHex: selectedColor, icon: selectedIcon)
+            } else {
+                _ = try store.createCollection(name: name, colorHex: selectedColor, icon: selectedIcon, parentID: parentID)
+            }
             dismiss()
         } catch let error as LibraryError {
             errorMessage = error.message

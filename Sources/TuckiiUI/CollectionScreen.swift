@@ -24,6 +24,7 @@ public struct CollectionScreen: View {
     @State private var showBulkMoveSheet = false
     @State private var showCreateSubcollection = false
     @State private var showShareSheet = false
+    @State private var showEditCollection = false
     @State private var alertInfo: CollectionAlert?
 
     private var collection: TuckiiCollection? { store.collection(collectionID) }
@@ -94,6 +95,12 @@ public struct CollectionScreen: View {
         .sheet(isPresented: $showSortSheet) {
             SortSavesSheet(collectionID: collectionID)
                 .environmentObject(store)
+        }
+        .sheet(isPresented: $showEditCollection) {
+            if let collection {
+                CreateCollectionSheet(editing: collection)
+                    .environmentObject(store)
+            }
         }
         .confirmationDialog("Delete link", isPresented: $showDeleteSelectedConfirm, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
@@ -194,6 +201,12 @@ public struct CollectionScreen: View {
                     Label("Sort saves", systemImage: "arrow.up.arrow.down")
                 }
                 Divider()
+                Button {
+                    showEditCollection = true
+                } label: {
+                    Label("Edit Collection", systemImage: "pencil")
+                }
+                .disabled(collection.isSystem)
                 Button(role: .destructive) {
                     showDeleteCollectionConfirm = true
                 } label: {

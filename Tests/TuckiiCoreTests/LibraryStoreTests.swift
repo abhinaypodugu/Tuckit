@@ -152,6 +152,16 @@ final class LibraryStoreTests: XCTestCase {
         XCTAssertEqual(store.usage.links, 0)
     }
 
+    func testUpdateCollection() throws {
+        let store = makeStore()
+        let collection = try store.createCollection(name: "Recipies", colorHex: 0x111111, now: day)
+        try store.updateCollection(collection.id, name: "Recipes", colorHex: 0xFFB020, icon: .coffee, now: day)
+        XCTAssertEqual(store.collection(collection.id)?.name, "Recipes")
+        XCTAssertEqual(store.collection(collection.id)?.colorHex, 0xFFB020)
+        XCTAssertEqual(store.collection(collection.id)?.icon, .coffee)
+        XCTAssertThrowsError(try store.updateCollection(collection.id, name: "   ", colorHex: 0, icon: .folder, now: day))
+    }
+
     func testSeedDemoData() {
         let store = makeStore()
         store.seedDemoData(now: day)

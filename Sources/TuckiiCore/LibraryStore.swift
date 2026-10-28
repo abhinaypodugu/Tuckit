@@ -180,8 +180,26 @@ public final class LibraryStore: ObservableObject {
         return collection
     }
 
-    public func deleteCollection(_ id: UUID) throws {
+    public func updateCollection(
+        _ id: UUID,
+        name: String,
+        colorHex: UInt32,
+        icon: TuckiiCollection.Icon,
+        now: Date = Date()
+    ) throws {
         guard let index = collections.firstIndex(where: { $0.id == id }) else {
+            throw LibraryError.collectionNotFound
+        }
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { throw LibraryError.invalidName }
+        collections[index].name = trimmed
+        collections[index].colorHex = colorHex
+        collections[index].icon = icon
+        collections[index].updatedAt = now
+        persist()
+    }
+
+    public func deleteCollection(_ id: UUID) throws {        guard let index = collections.firstIndex(where: { $0.id == id }) else {
             throw LibraryError.collectionNotFound
         }
         guard !collections[index].isSystem else { return }
