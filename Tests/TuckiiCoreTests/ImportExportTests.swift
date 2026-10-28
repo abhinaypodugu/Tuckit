@@ -86,7 +86,7 @@ final class ImportExportTests: XCTestCase {
             return XCTFail("export failed")
         }
 
-        let fresh = makeStore()
+        let fresh = LibraryStore(storageURL: directory.appendingPathComponent("fresh.json"))
         let result = try fresh.importBookmarks(from: backup, fileExtension: "json", now: day)
         XCTAssertEqual(result.imported, 1)
         XCTAssertEqual(result.collectionsCreated, 1)
