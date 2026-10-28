@@ -534,7 +534,7 @@ public final class LibraryStore: ObservableObject {
         return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
     }
 
-    private func persist() {
+    func persist() {
         let snapshot = Snapshot(
             version: 1,
             collections: collections,

@@ -212,7 +212,10 @@ struct CollectionScreen: View {
             if selectedURLs.isEmpty {
                 selectActionLabel("Share", enabled: false)
             } else {
-                ShareLink(items: selectedURLs) {
+                ShareLink(
+                    items: selectedURLs,
+                    preview: SharePreview("Tuckii links", image: Image(systemName: "link"))
+                ) {
                     selectActionLabel("Share", enabled: true)
                 }
             }
