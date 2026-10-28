@@ -2,65 +2,145 @@ import SwiftUI
 import TuckiiCore
 
 public struct HomeView: View {
+    @EnvironmentObject private var store: LibraryStore
     @State private var urlText = ""
+    @State private var showCreateCollection = false
+    @State private var showCollectionSort = false
+    @State private var alertInfo: HomeAlertInfo?
+    @State private var path: [UUID] = []
 
     public init() {}
 
     public var body: some View {
-        ZStack {
-            Theme.cream.ignoresSafeArea()
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    HStack(spacing: 12) {
-                        iconButton("gearshape")
-                        Spacer()
-                        iconButton("folder.badge.gearshape")
-                        iconButton("magnifyingglass")
+        NavigationStack(path: $path) {
+            ZStack {
+                Theme.cream.ignoresSafeArea()
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 22) {
+                        header
+                        title
+                        quickSaveBar
+                        collectionsHeader
+                        collectionsContent
+                        Spacer(minLength: 32)
                     }
-                    Text("Save now.\nFind anytime.")
-                        .font(.system(size: 40, weight: .black, design: .rounded))
-                        .foregroundStyle(Theme.ink)
-                    HStack(spacing: 12) {
-                        HStack(spacing: 10) {
-                            Image(systemName: "number")
-                            TextField("Paste link to quick save", text: $urlText)
-                                .autocorrectionDisabled()
-                                #if os(iOS)
-                                .textInputAutocapitalization(.never)
-                                #endif
-                            Image(systemName: "doc.on.clipboard")
-                        }
-                        .padding(.horizontal, 16)
-                        .frame(height: 56)
-                        .background(RoundedRectangle(cornerRadius: 16).fill(.white))
-                        .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.ink, lineWidth: 2.5))
-
-                        Button {
-                        } label: {
-                            Image(systemName: "plus")
-                                .font(.system(size: 22, weight: .bold))
-                                .foregroundStyle(Theme.ink)
-                                .frame(width: 56, height: 56)
-                                .background(RoundedRectangle(cornerRadius: 16).fill(Theme.ctaYellow))
-                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.ink, lineWidth: 2.5))
-                        }
-                    }
-                    HStack {
-                        Text("My Collections")
-                            .font(.system(size: 22, weight: .heavy, design: .rounded))
-                            .foregroundStyle(Theme.ink)
-                        Spacer()
-                        HStack(spacing: 4) {
-                            Text("Oldest")
-                            Image(systemName: "chevron.down")
-                        }
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(.gray)
-                    }
-                    emptyState
-                    Spacer(minLength: 40)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
                 }
-                .padding(20)
+            }
+            .navigationBarHidden(true)
+            .navigationDestination(for: UUID.self) { id in
+                CollectionScreen(collectionID: id)
+            }
+            .sheet(isPresented: $showCreateCollection) {
+                CreateCollectionSheet()
+                    .environmentObject(store)
+            }
+            .confirmationDialog("Sort collections", isPresented: $showCollectionSort, titleVisibility: .visible) {
+                ForEach(CollectionSort.allCases, id: \.self) { sort in
+                    Button(sort.displayName) {
+                        store.setCollectionSort(sort)
+                    }
+                }
+            }
+            .alert(item: $alertInfo) { info in
+                Alert(title: Text(info.title), message: Text(info.message), dismissButton: .default(Text("OK")))
+            }
+        }
+    }
+
+    private var header: some View {
+        HStack(spacing: 12) {
+            iconButton("gearshape") {}
+            Spacer()
+            iconButton("folder.badge.gearshape") {
+                showCreateCollection = true
+            }
+            iconButton("magnifyingglass") {}
+        }
+    }
+
+    private var title: some View {
+        Text("Save now.\nFind anytime.")
+            .font(.system(size: 40, weight: .black, design: .rounded))
+            .foregroundStyle(Theme.ink)
+            .lineSpacing(2)
+    }
+
+    private var quickSaveBar: some View {
+        HStack(spacing: 12) {
+            HStack(spacing: 10) {
+                Image(systemName: "number")
+                    .font(.system(size: 17, weight: .semibold))
+                TextField("Paste link to quick save", text: $urlText)
+                    .autocorrectionDisabled()
+                    #if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+                    #endif
+                Image(systemName: "doc.on.clipboard")
+                    .font(.system(size: 16))
+                    .foregroundStyle(Theme.ink.opacity(0.7))
+            }
+            .foregroundStyle(Theme.ink)
+            .padding(.horizontal, 16)
+            .frame(height: 56)
+            .background(RoundedRectangle(cornerRadius: 16).fill(.white))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.ink, lineWidth: 2.5))
+
+            Button(action: quickAdd) {
+                Image(systemName: "plus")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(Theme.ink)
+                    .frame(width: 56, height: 56)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(Theme.ctaYellow))
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.ink, lineWidth: 2.5))
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private var collectionsHeader: some View {
+        HStack {
+            Text("My Collections")
+                .font(.system(size: 22, weight: .heavy, design: .rounded))
+                .foregroundStyle(Theme.ink)
+            Spacer()
+            Button {
+                showCollectionSort = true
+            } label: {
+                HStack(spacing: 4) {
+                    Text(store.settings.collectionSort.displayName.components(separatedBy: " ").first ?? "Oldest")
+                    Image(systemName: "chevron.down")
+                }
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.gray)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    @ViewBuilder
+    private var collectionsContent: some View {
+        if store.visibleCollections.isEmpty {
+            emptyState
+        } else {
+            LazyVGrid(
+                columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)],
+                spacing: 20
+            ) {
+                ForEach(store.visibleCollections) { collection in
+                    Button {
+                        path.append(collection.id)
+                    } label: {
+                        CollectionCard(
+                            collection: collection,
+                            itemCount: store.bookmarkCount(in: collection.id),
+                            hasNew: store.unseenCount(in: collection.id) > 0
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
     }
@@ -79,6 +159,7 @@ public struct HomeView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
             Button {
+                showCreateCollection = true
             } label: {
                 Text("Create now")
                     .font(.system(size: 16, weight: .bold))
@@ -88,18 +169,44 @@ public struct HomeView: View {
                     .background(RoundedRectangle(cornerRadius: 12).fill(Theme.ctaYellow))
                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.ink, lineWidth: 2))
             }
+            .buttonStyle(.plain)
             .padding(.top, 6)
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 28)
     }
 
-    private func iconButton(_ systemName: String) -> some View {
-        Image(systemName: systemName)
-            .font(.system(size: 19, weight: .semibold))
-            .foregroundStyle(Theme.ink)
-            .frame(width: 48, height: 48)
-            .background(RoundedRectangle(cornerRadius: 14).fill(.white))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.ink, lineWidth: 2.5))
+    private func iconButton(_ systemName: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 19, weight: .semibold))
+                .foregroundStyle(Theme.ink)
+                .frame(width: 48, height: 48)
+                .background(RoundedRectangle(cornerRadius: 14).fill(.white))
+                .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.ink, lineWidth: 2.5))
+        }
+        .buttonStyle(.plain)
     }
+
+    private func quickAdd() {
+        guard let url = URLNormalizer.normalize(urlText) else {
+            alertInfo = HomeAlertInfo(title: "No URL", message: "Please enter a link to save")
+            return
+        }
+        do {
+            _ = try store.addBookmark(url: url)
+            urlText = ""
+            path.append(store.unsorted.id)
+        } catch let error as LibraryError {
+            alertInfo = HomeAlertInfo(title: error.title, message: error.message)
+        } catch {
+            alertInfo = HomeAlertInfo(title: "Couldn't save", message: error.localizedDescription)
+        }
+    }
+}
+
+private struct HomeAlertInfo: Identifiable {
+    let id = UUID()
+    let title: String
+    let message: String
 }

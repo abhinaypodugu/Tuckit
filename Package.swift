@@ -15,7 +15,7 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "TuckiiApp",
-            dependencies: ["TuckiiUI"]
+            dependencies: ["TuckiiUI", "TuckiiCore"]
         ),
         .target(
             name: "TuckiiUI",
