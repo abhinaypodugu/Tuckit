@@ -99,6 +99,7 @@ struct LinkDetailView: View {
             Spacer()
             roundControl(systemName: bookmark.isPinned ? "pin.fill" : "pin", active: bookmark.isPinned) {
                 store.togglePin(bookmarkID)
+                Haptics.tap(store.settings.hapticsEnabled)
             }
         }
         .padding(.horizontal, 18)

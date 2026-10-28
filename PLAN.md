@@ -1,5 +1,8 @@
 # Tuckii — Exact Clone Plan
 
+Status: **implementing** — SwiftUI app builds and is screenshot-verified on the iOS
+Simulator via GitHub Actions. See §11 for build status and deviations.
+
 Status: research complete (live app exploration on Android v1.6.0, 2026-10-28).
 Evidence: `.research/shots/*.png` (91 screenshots, every screen/state below), `.research/ui/*.xml`.
 
@@ -394,3 +397,38 @@ no analytics SDKs (privacy parity).
 
 Sources consulted: Google Play listing (com.myCku.tuckii), App Store listing (id6776568114),
 appbrain; live device exploration of Android v1.6.0 (primary reference).
+
+---
+
+## 11. Implementation status (living log)
+
+Repository: https://github.com/abhinaypodugu/Tuckit (public; GitHub Actions builds,
+runs unit tests, and captures simulator screenshots as artifacts).
+
+Implemented (maps to §2/§3):
+- Core library store: collections (incl. implicit Unsorted), saves, pin/seen, notes,
+  inline title edits, tags (Pro), subcollection model (Pro), per-collection save sort,
+  global collection sort, search, daily free quotas (4 links / 10 images / 3 collections)
+  with midnight reset, Pro simulation flag, JSON persistence.
+- Metadata scraper (OG/Twitter/title/favicon, entity decoding, relative URL resolution).
+- Screens: Home (quick save, review banner, collections grid + sort), Collection
+  (pinned/saves, sort menu, select model ready), Link details (hero, inline title,
+  notes editor, Move, Refresh, Delete confirm, pin, tags gate), Search (library stats,
+  recently saved, live results), Settings (plan usage + reset countdown, haptics,
+  dark mode, reminders, data/storage, support, delete-all), Backup & Restore
+  (export JSON via fileExporter, restore JSON, import CSV/HTML/JSON), How To guides,
+  Pro upsell modal + paywall (simulated purchase), Focus Mode deck, onboarding carousel
+  with interactive save demo, focus demo and paywall.
+- CI: GitHub Actions macOS runner → XcodeGen → xcodebuild → simctl → 8 screen captures
+  (home, onboarding, collection, details, search, settings, focus, paywall).
+
+Known deviations / not yet done:
+- No iOS Share Extension or iCloud sync (out of scope by decision); quick save is the
+  in-app paste bar. How To copy reflects that.
+- Paywall/StoreKit is simulated (`proSimulated`); no real billing. Restore Purchases is
+  non-functional. Lifetime plan card not included.
+- Backup restore reads `.json` only; `.zip` not implemented. Import supports CSV/HTML/JSON.
+- Focus deck uses simple stack styling (not the full 3D stage), pending polish.
+- Haptics wired for save + pin; reminders schedule one 24h notification.
+- iPad sidebar layout, widgets, sharing collections: not implemented.
+- App icon/mascot are placeholders (no copied artwork).

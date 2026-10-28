@@ -253,6 +253,7 @@ public struct HomeView: View {
         }
         do {
             let bookmark = try store.addBookmark(url: url)
+            Haptics.tap(store.settings.hapticsEnabled)
             urlText = ""
             path.append(store.unsorted.id)
             Task {

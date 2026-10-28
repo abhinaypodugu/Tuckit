@@ -278,6 +278,7 @@ struct SettingsView: View {
                             showReminderPrimer = true
                         } else {
                             store.setRemindersEnabled(false)
+                            Self.cancelReminder()
                         }
                     }
                 )
@@ -511,8 +512,31 @@ struct SettingsView: View {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
             DispatchQueue.main.async {
                 store.setRemindersEnabled(granted)
+                if granted {
+                    Self.scheduleReminder()
+                } else {
+                    Self.cancelReminder()
+                }
             }
         }
+        #endif
+    }
+
+    private static func scheduleReminder() {
+        #if canImport(UserNotifications)
+        let content = UNMutableNotificationContent()
+        content.title = "Don't forget your saves"
+        content.body = "Swipe through your unseen saves now."
+        content.sound = .default
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 24 * 60 * 60, repeats: false)
+        let request = UNNotificationRequest(identifier: "tuckii.reminder", content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request)
+        #endif
+    }
+
+    private static func cancelReminder() {
+        #if canImport(UserNotifications)
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["tuckii.reminder"])
         #endif
     }
 
