@@ -1,6 +1,9 @@
 import SwiftUI
 import Foundation
 import TuckiiCore
+#if canImport(UIKit)
+import UIKit
+#endif
 
 public struct HomeView: View {
     @EnvironmentObject private var store: LibraryStore
@@ -55,12 +58,9 @@ public struct HomeView: View {
                 FocusModeView(collectionID: nil)
                     .environmentObject(store)
             }
-            .confirmationDialog("Sort collections", isPresented: $showCollectionSort, titleVisibility: .visible) {
-                ForEach(CollectionSort.allCases, id: \.self) { sort in
-                    Button(sort.displayName) {
-                        store.setCollectionSort(sort)
-                    }
-                }
+            .sheet(isPresented: $showCollectionSort) {
+                SortCollectionsSheet()
+                    .environmentObject(store)
             }
             .alert(item: $alertInfo) { info in
                 Alert(title: Text(info.title), message: Text(info.message), dismissButton: .default(Text("OK")))
@@ -101,9 +101,18 @@ public struct HomeView: View {
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
                     #endif
-                Image(systemName: "doc.on.clipboard")
-                    .font(.system(size: 16))
-                    .foregroundStyle(Theme.ink.opacity(0.7))
+                Button {
+                    #if canImport(UIKit)
+                    if let clipboard = UIPasteboard.general.string, !clipboard.isEmpty {
+                        urlText = clipboard
+                    }
+                    #endif
+                } label: {
+                    Image(systemName: "doc.on.clipboard")
+                        .font(.system(size: 16))
+                        .foregroundStyle(Theme.ink.opacity(0.7))
+                }
+                .buttonStyle(.plain)
             }
             .foregroundStyle(Theme.ink)
             .padding(.horizontal, 16)

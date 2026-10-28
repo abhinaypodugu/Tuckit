@@ -91,14 +91,9 @@ public struct CollectionScreen: View {
             CollectionShareSheet(collectionID: collectionID)
                 .environmentObject(store)
         }
-        .confirmationDialog("Sort saves", isPresented: $showSortSheet, titleVisibility: .visible) {
-            if let collection {
-                ForEach(SaveSort.allCases, id: \.self) { sort in
-                    Button(sort.displayName) {
-                        store.setSaveSort(sort, for: collection.id)
-                    }
-                }
-            }
+        .sheet(isPresented: $showSortSheet) {
+            SortSavesSheet(collectionID: collectionID)
+                .environmentObject(store)
         }
         .confirmationDialog("Delete link", isPresented: $showDeleteSelectedConfirm, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
