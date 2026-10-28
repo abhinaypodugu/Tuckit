@@ -258,7 +258,11 @@ public struct CollectionScreen: View {
                 .lineLimit(1)
             Spacer(minLength: 0)
             Button("All") {
-                selection = Set(allBookmarks.map(\.id))
+                if selection.count == allBookmarks.count {
+                    selection.removeAll()
+                } else {
+                    selection = Set(allBookmarks.map(\.id))
+                }
             }
             .font(.system(size: 13, weight: .bold))
             .foregroundStyle(Theme.ink)
