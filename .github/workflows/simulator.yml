@@ -13,6 +13,7 @@ concurrency:
 jobs:
   unit-tests:
     runs-on: macos-14
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - name: Select Xcode 16.2
@@ -31,6 +32,7 @@ jobs:
 
   build-and-screenshot:
     runs-on: macos-14
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -65,13 +67,17 @@ jobs:
           import json, subprocess
           data = json.loads(subprocess.check_output(["xcrun", "simctl", "list", "devices", "available", "-j"]))
           for runtime in sorted(data["devices"], reverse=True):
+              if "iOS-" not in runtime:
+                  continue
               for device in data["devices"][runtime]:
                   if device["name"].startswith("iPhone"):
                       print("udid=" + device["udid"])
                       print("name=" + device["name"])
+                      print("runtime=" + runtime)
                       raise SystemExit
           raise SystemExit("No iPhone simulator found")
           EOF
+          echo "Picked ${{ steps.sim.outputs.name }} (${{ steps.sim.outputs.runtime }})"
 
       - name: Boot simulator
         run: |
@@ -88,6 +94,7 @@ jobs:
           UDID="${{ steps.sim.outputs.udid }}"
           mkdir -p artifacts
           for screen in home home-dark onboarding collection details search settings focus paywall; do
+            echo "== Capture $screen =="
             xcrun simctl terminate "$UDID" com.example.tuckii 2>/dev/null || true
             if [ "$screen" = "home" ]; then
               xcrun simctl launch "$UDID" com.example.tuckii --seed-demo
@@ -98,6 +105,7 @@ jobs:
             fi
             sleep 6
             xcrun simctl io "$UDID" screenshot "artifacts/$screen.png"
+            echo "== Captured $screen =="
           done
 
       - name: Upload screenshots
