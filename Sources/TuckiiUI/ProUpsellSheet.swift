@@ -268,7 +268,6 @@ struct PaywallView: View {
                 }
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.secondary)
-                .underline()
                 .frame(maxWidth: .infinity)
             }
             .padding(20)
