@@ -18,14 +18,15 @@ struct TuckiiApp: App {
         screenOverride = screenArgument
 
         let store = LibraryStore()
+        let isCaptureLaunch = arguments.contains("--seed-demo") || screenArgument != nil
         if screenArgument == "onboarding" {
             UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
-        } else if arguments.contains("--seed-demo") || screenArgument != nil {
+        } else if isCaptureLaunch {
             UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
             store.seedDemoData()
         }
-        if arguments.contains("--dark") {
-            store.setDarkMode(true)
+        if isCaptureLaunch {
+            store.setDarkMode(arguments.contains("--dark"))
         }
         _store = StateObject(wrappedValue: store)
     }
